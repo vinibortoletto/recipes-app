@@ -80,10 +80,12 @@ export function RecipesProvider({ children }) {
 
   const searchMeals = useCallback(async () => {
     if (searchFor === 'ingredients') {
+      setIsLoading(true);
       const newFilteredRecipesList = await getRecipesByIngredient(
         searchInput,
         recipeType,
       );
+      setIsLoading(false);
 
       if (!newFilteredRecipesList) {
         return global.alert(ERROR_MESSAGE);
@@ -93,10 +95,12 @@ export function RecipesProvider({ children }) {
     }
 
     if (searchFor === 'name') {
+      setIsLoading(true);
       const newFilteredRecipesList = await getRecipesByName(
         searchInput,
         recipeType,
       );
+      setIsLoading(false);
 
       if (!newFilteredRecipesList[recipeType]) return global.alert(ERROR_MESSAGE);
 
@@ -105,10 +109,12 @@ export function RecipesProvider({ children }) {
     }
 
     if (searchFor === 'firstLetter') {
+      setIsLoading(true);
       const newFilteredRecipesList = await getRecipesByFirstLetter(
         searchInput,
         recipeType,
       );
+      setIsLoading(false);
 
       if (!newFilteredRecipesList) return global.alert(ERROR_MESSAGE);
       setFilteredRecipesList(newFilteredRecipesList[recipeType]);
@@ -116,7 +122,9 @@ export function RecipesProvider({ children }) {
   }, [searchFor, searchInput, checkIfRecipeIsUnique, recipeType]);
 
   const fetchRecipesByCategory = useMemo(() => async (categoryName, categoryType) => {
+    setIsLoading(true);
     const newFilteredRecipesList = await getRecipesByCategory(categoryName, categoryType);
+    setIsLoading(false);
 
     if (newFilteredRecipesList[recipeType]?.every(
       (recipe, index) => {
@@ -124,7 +132,10 @@ export function RecipesProvider({ children }) {
         return recipe[strRecipe] === filteredRecipesList[index][strRecipe];
       },
     )) {
+      setIsLoading(true);
       const newRecipes = await getRecipes(categoryType);
+      setIsLoading(false);
+
       setFilteredRecipesList(newRecipes[recipeType]);
     } else {
       setFilteredRecipesList(newFilteredRecipesList[recipeType]);

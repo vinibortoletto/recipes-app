@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Card from '../components/Card';
+import Loading from '../components/Loading';
 import { RecipesContext } from '../contexts/RecipesContext';
 import { getRecipeDetails } from '../services/recipesAPI';
 
@@ -12,6 +13,8 @@ export default function RecipeInProgress() {
     usedIngredients,
     recipeDetails,
     type,
+    isLoading,
+    setIsLoading,
   } = useContext(RecipesContext);
 
   const history = useHistory();
@@ -19,12 +22,19 @@ export default function RecipeInProgress() {
 
   useEffect(() => {
     const fetch = async () => {
+      setIsLoading(true);
       const newRecipeDetails = await getRecipeDetails(recipeId, recipeType);
       setRecipeDetails(newRecipeDetails[recipeType][0]);
+      setIsLoading(false);
     };
 
     fetch();
-  }, [recipeId, recipeType, setRecipeDetails]);
+  }, [
+    recipeId,
+    recipeType,
+    setRecipeDetails,
+    setIsLoading,
+  ]);
 
   const markRecipeDone = () => {
     history.push('/done-recipes');
@@ -48,6 +58,8 @@ export default function RecipeInProgress() {
       JSON.stringify([...localDoneRecipes, newDoneRecipe]),
     );
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div>
