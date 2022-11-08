@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { string } from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import Footer from '../components/Footer';
@@ -7,13 +7,19 @@ import Drinks from './Drinks';
 import Meals from './Meals';
 import { getRecipes, getRecipesCategories } from '../services/recipesAPI';
 import { RecipesContext } from '../contexts/RecipesContext';
+import Loading from '../components/Loading';
 
 const MAX_CATEGORIES_LENGTH = 5;
 
 export default function Recipes({ title }) {
   const [categoriesList, setCategoriesList] = useState([]);
   const history = useHistory();
-  const { fetchRecipesByCategory, setFilteredRecipesList } = useContext(RecipesContext);
+  const {
+    fetchRecipesByCategory,
+    setFilteredRecipesList,
+    setIsLoading,
+    isLoading,
+  } = useContext(RecipesContext);
 
   const { pathname } = history.location;
   const recipeType = pathname.split('/').filter((item) => item !== '/').join('');
@@ -26,18 +32,27 @@ export default function Recipes({ title }) {
     fetch();
   }, [recipeType]);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const newFilteredRecipesList = await getRecipes(recipeType);
-      setFilteredRecipesList(newFilteredRecipesList[recipeType]);
-    };
-    fetch();
-  }, [history, recipeType, setFilteredRecipesList]);
-
-  const resetRecipes = async () => {
+  const fetchRecipes = useCallback(async () => {
+    setIsLoading(true);
     const newFilteredRecipesList = await getRecipes(recipeType);
     setFilteredRecipesList(newFilteredRecipesList[recipeType]);
-  };
+    setIsLoading(false);
+  }, [
+    recipeType,
+    setFilteredRecipesList,
+    setIsLoading,
+  ]);
+
+  useEffect(() => {
+    fetchRecipes();
+  }, [
+    history,
+    recipeType,
+    setFilteredRecipesList,
+    fetchRecipes,
+  ]);
+
+  if (isLoading) return <Loading />;
 
   return (
     <>
@@ -65,7 +80,7 @@ export default function Recipes({ title }) {
           <button
             type="button"
             data-testid="All-category-filter"
-            onClick={ resetRecipes }
+            onClick={ fetchRecipes }
             className="bg-purple-600 text-amber-200 font-bold py-2 px-4 rounded-full"
           >
             All

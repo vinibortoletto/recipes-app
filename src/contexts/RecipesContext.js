@@ -26,6 +26,7 @@ export function RecipesProvider({ children }) {
   const [recipeDetails, setRecipeDetails] = useState({});
   const [usedIngredients, setUsedIngredients] = useState([]);
   const [filterType, setFilterType] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const { pathname } = history.location;
   const recipeId = pathname.split('/')[2];
@@ -157,6 +158,8 @@ export function RecipesProvider({ children }) {
     setUsedIngredients,
     filterType,
     setFilterType,
+    isLoading,
+    setIsLoading,
   }), [
     searchFor,
     setSearchFor,
@@ -184,6 +187,8 @@ export function RecipesProvider({ children }) {
     setUsedIngredients,
     filterType,
     setFilterType,
+    isLoading,
+    setIsLoading,
   ]);
 
   return (
