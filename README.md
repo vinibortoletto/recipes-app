@@ -23,7 +23,6 @@
 Esse projeto foi desenvolvido usando as seguintes tecnologias:
 
 -  [React.js](https://reactjs.org/)
--  [ContextAPI](https://reactjs.org/)
 -  [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 -  [TailwindCSS](https://tailwindcss.com/)
 -  [Figma](https://figma.com/)
